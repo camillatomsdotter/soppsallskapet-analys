@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Verksamhetsdata – analys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --gron: #4E725C; --text: #212121; --yta: #F2F2F2; --vit: #FFFFFF;
+    --kram: #E8C872; --rod: #B5523B; --brun: #7A5534;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  body { background: var(--vit); color: var(--text); font-family: Lato, Arial, sans-serif; font-size: 18px; line-height: 1.6; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 32px 16px 64px; }
+  header { border-bottom: 4px solid var(--gron); padding-bottom: 20px; margin-bottom: 32px; }
+  h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 8px; color: var(--gron); }
+  .slogan { font-weight: 300; font-style: italic; margin: 0 0 12px; }
+  h2 { font-size: 1.5rem; margin: 48px 0 16px; color: var(--gron); }
+  h2.uppm { color: var(--rod); }
+  h3 { font-size: 1.15rem; margin: 0 0 4px; }
+  p { margin: 0 0 12px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+  .kpi { background: var(--yta); border-radius: 12px; padding: 16px; border-top: 4px solid var(--gron); }
+  .kpi.rod { border-top-color: var(--rod); }
+  .kpi .tal { font-size: 1.8rem; font-weight: 700; line-height: 1.2; }
+  .kpi .etikett { font-size: 0.95rem; }
+  .sammanfattning { background: var(--yta); border-left: 6px solid var(--kram); padding: 16px 20px; border-radius: 0 12px 12px 0; }
+  .fynd { border: 1px solid #ddd; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  .fynd.rod { border-left: 6px solid var(--rod); }
+  .fynd.gron { border-left: 6px solid var(--gron); }
+  .fynd.brun { border-left: 6px solid var(--brun); }
+  .siffra { font-size: 1.3rem; font-weight: 700; margin: 4px 0 8px; }
+  .fynd.rod .siffra { color: var(--rod); }
+  .fynd.gron .siffra { color: var(--gron); }
+  .fynd.brun .siffra { color: var(--brun); }
+  .diagram { margin-top: 12px; }
+  .diagram h4 { font-size: 1rem; margin: 0 0 8px; }
+  .canvas-box { position: relative; height: 280px; width: 100%; }
+  ol.forslag { padding-left: 24px; }
+  ol.forslag li { margin-bottom: 12px; }
+  .tabell-box { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid #ddd; border-radius: 12px; }
+  table { border-collapse: collapse; font-size: 0.85rem; min-width: 1100px; }
+  th, td { padding: 8px 10px; text-align: right; border-bottom: 1px solid #e5e5e5; white-space: nowrap; }
+  th { background: var(--gron); color: var(--vit); font-weight: 700; }
+  td:first-child, th:first-child, td:last-child, th:last-child { text-align: left; }
+  td:last-child { white-space: normal; min-width: 260px; }
+  tr:nth-child(even) td { background: var(--yta); }
+  .not { font-size: 0.95rem; }
+  footer { margin-top: 40px; font-size: 0.9rem; color: #555; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Så mår Soppsällskapet – analys av verksamhetsdata</h1>
+  <p class="slogan">Vi kommer till dig med soppa och gemenskap</p>
+  <p>Analysen bygger på filen <strong>verksamhetsdata.csv</strong> och omfattar pilotens sex första månader, juni–november 2026.</p>
+  <p style="background:#FFF4D6;border:1px solid #E8C872;border-radius:8px;padding:10px 14px;margin-top:12px"><strong>Obs:</strong> Siffrorna på den här sidan är påhittad exempeldata för en övning. De visar inte Soppsällskapets verkliga resultat.</p>
+</header>
+
+<section aria-label="Nyckeltal">
+  <div class="kpis" id="kpis"></div>
+</section>
+
+<h2>Sammanfattning</h2>
+<div class="sammanfattning">
+  <p>Piloten växer stadigt: antalet besök per månad har gått från 34 till 81, och de äldre ger besöken i snitt 4,7 av 5. Volontärerna har blivit fler än dubbelt så många, och sedan september går ekonomin med överskott tack vare fem samarbetsföretag. Men väntelistan växer snabbare än antalet äldre som får besök – från 2 till 17 personer. I november ställdes vart tionde besök in. Den viktigaste frågan framåt är att hitta fler volontärer så att fler av dem som väntar kan få besök.</p>
+</div>
+
+<h2>Det som går bra</h2>
+<div id="bra"></div>
+
+<h2 class="uppm">Det som behöver uppmärksamhet</h2>
+<div id="uppm"></div>
+
+<h2>Förändringar över tid</h2>
+<div id="tid"></div>
+
+<h2>Förslag på vad vi kan göra härnäst</h2>
+<ol class="forslag">
+  <li><strong>Rekrytera volontärer med väntelistan som mål.</strong> Väntelistan ökar med i snitt 3 personer i månaden. I dag går det ungefär 0,85 äldre med besök på varje aktiv volontär (23 äldre på 27 volontärer). Med den takten behövs omkring 20 nya volontärer för att de 17 som väntar ska få lika många besök som de andra. Be samarbetsföretagen om fler medarbetare som volontärer.</li>
+  <li><strong>Ha reservvolontärer inför vintern.</strong> Inställda besök ökade till 10 % i november, enligt noteringen på grund av förkylningar. Ett par reserver per område och en enkel rutin för att hitta ersättare kan hålla besöken igång.</li>
+  <li><strong>Prata med volontärer som slutar.</strong> 8 volontärer har slutat under perioden. Ett kort samtal eller tackmejl med en fråga om varför kan ge svar på vad vi kan göra bättre.</li>
+  <li><strong>Gör intäkterna jämnare.</strong> I juli och augusti kom inga intäkter från företag. Fråga om löpande stöd per månad eller kvartal, och lyft julgåvorna, som redan ökar, i kommunikationen inför december.</li>
+</ol>
+
+<h2>Källdata</h2>
+<p class="not">Alla värden direkt från verksamhetsdata.csv. Tabellen kan rullas i sidled på mobil.</p>
+<div class="tabell-box"><table id="tabell"></table></div>
+
+<footer>
+  <p>Beräkningarna är gjorda med Python (modulen csv). Andel inställda besök = inställda / (genomförda + inställda). Kostnad per besök = (soppa + övriga kostnader) / genomförda besök. Datan omfattar bara sex månader, så trenderna ska läsas med försiktighet.</p>
+</footer>
+
+</div>
+
+<script>
+// ---- Källdata från verksamhetsdata.csv ----
+const data = [
+  { manad: "2026-06", aktiva: 12, nya: 12, slutat: 0, besokta: 10, vantelista: 2,  besok: 34, installda: 2, timmar: 51,  soppa: 1190, ovriga: 4500, intForetag: 10000, intGavor: 1500, foretag: 1, nojdhet: 4.6, notering: "Piloten startar med volontärer från Seniorskap" },
+  { manad: "2026-07", aktiva: 11, nya: 1,  slutat: 2, besokta: 12, vantelista: 5,  besok: 38, installda: 6, timmar: 57,  soppa: 1330, ovriga: 1800, intForetag: 0,     intGavor: 800,  foretag: 1, nojdhet: 4.7, notering: "Semestertider ger fler inställda besök" },
+  { manad: "2026-08", aktiva: 14, nya: 4,  slutat: 1, besokta: 15, vantelista: 8,  besok: 49, installda: 4, timmar: 74,  soppa: 1715, ovriga: 2200, intForetag: 0,     intGavor: 1200, foretag: 1, nojdhet: 4.7, notering: "Flygblad på vårdcentral och bibliotek" },
+  { manad: "2026-09", aktiva: 20, nya: 7,  slutat: 1, besokta: 18, vantelista: 11, besok: 63, installda: 3, timmar: 95,  soppa: 2205, ovriga: 6500, intForetag: 25000, intGavor: 2400, foretag: 3, nojdhet: 4.8, notering: "Företagskampanj och första pressartikeln" },
+  { manad: "2026-10", aktiva: 24, nya: 6,  slutat: 2, besokta: 21, vantelista: 14, besok: 76, installda: 5, timmar: 114, soppa: 2660, ovriga: 3100, intForetag: 15000, intGavor: 3100, foretag: 4, nojdhet: 4.8, notering: "Två företag låter medarbetare vara volontärer" },
+  { manad: "2026-11", aktiva: 27, nya: 5,  slutat: 2, besokta: 23, vantelista: 17, besok: 81, installda: 9, timmar: 122, soppa: 2835, ovriga: 3400, intForetag: 20000, intGavor: 4300, foretag: 5, nojdhet: 4.7, notering: "Förkylningar ger fler inställda besök och julgåvor ökar" }
+];
+
+const manadsnamn = { "06": "jun", "07": "jul", "08": "aug", "09": "sep", "10": "okt", "11": "nov" };
+const etiketter = data.map(d => manadsnamn[d.manad.slice(5)]);
+const tal = (v, dec = 0) => v.toLocaleString('sv-SE', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+const kr = v => tal(Math.round(v)) + ' kr';
+const proc = (v, dec = 0) => tal(v, dec) + ' %';
+const summa = f => data.reduce((s, d) => s + d[f], 0);
+const forsta = data[0], sista = data[data.length - 1];
+const forandring = f => (sista[f] - forsta[f]) / forsta[f] * 100;
+
+// ---- Beräkningar ----
+const totBesok = summa('besok');                                  // 341
+const totInstallda = summa('installda');                          // 29
+const totKostnad = summa('soppa') + summa('ovriga');              // 33 435
+const totIntakt = summa('intForetag') + summa('intGavor');        // 83 300
+const nojdSnitt = summa('nojdhet') / data.length;                 // 4,72
+const installdaAndel = data.map(d => d.installda / (d.besok + d.installda) * 100);
+const kostnadPerBesok = data.map(d => (d.soppa + d.ovriga) / d.besok);
+const besokPerVol = data.map(d => d.besok / d.aktiva);
+const netto = data.map(d => (d.intForetag + d.intGavor) - (d.soppa + d.ovriga));
+
+// ---- Nyckeltal ----
+const kpis = [
+  { tal: tal(totBesok), etikett: "genomförda besök totalt, juni–nov" },
+  { tal: "+" + proc(forandring('besok')), etikett: "fler besök per månad, juni → nov (34 → 81)" },
+  { tal: tal(nojdSnitt, 1) + " av 5", etikett: "de äldres nöjdhet i snitt" },
+  { tal: "+" + kr(totIntakt - totKostnad), etikett: "överskott hittills (intäkter minus kostnader)" },
+  { tal: tal(sista.vantelista), etikett: "äldre på väntelistan i november (2 i juni)", rod: true }
+];
+document.getElementById('kpis').innerHTML = kpis.map(k =>
+  `<div class="kpi${k.rod ? ' rod' : ''}"><div class="tal">${k.tal}</div><div class="etikett">${k.etikett}</div></div>`).join('');
+
+// ---- Fynd ----
+const fynd = {
+  bra: [
+    { id: "f1", rubrik: "Besöken har mer än fördubblats", siffra: `${tal(forsta.besok)} → ${tal(sista.besok)} besök per månad (+${proc(forandring('besok'))})`,
+      text: `Antalet äldre som får besök har ökat från ${forsta.besokta} till ${sista.besokta}. Varje äldre får i snitt drygt 3 besök i månaden, och volontärtimmarna följer besöken nästan exakt (1,5 timme per besök hela perioden).`,
+      diagram: "Besöken ökar varje månad" },
+    { id: "f2", rubrik: "De äldre är mycket nöjda", siffra: `${tal(nojdSnitt, 1)} av 5 i snitt, mellan 4,6 och 4,8 varje månad`,
+      text: "Nöjdheten har legat stabilt högt även när verksamheten har vuxit. Datan visar inte hur många som har svarat, så siffran säger inget om hur säker den är." },
+    { id: "f3", rubrik: "Företagen bär ekonomin", siffra: `${kr(totIntakt)} i intäkter mot ${kr(totKostnad)} i kostnader`,
+      text: `Företagen står för ${proc(summa('intForetag') / totIntakt * 100)} av intäkterna, och samarbetsföretagen har ökat från 1 till 5. Gåvorna har nästan tredubblats, från ${kr(forsta.intGavor)} till ${kr(sista.intGavor)} i månaden. Kostnaden per besök ligger på 76–82 kr de vanliga månaderna; soppan kostar 35 kr per besök hela tiden.`,
+      diagram: "Sedan september går varje månad med överskott" }
+  ],
+  uppm: [
+    { id: "f4", rubrik: "Väntelistan växer snabbare än antalet äldre som får besök", siffra: `${forsta.vantelista} → ${sista.vantelista} på väntelistan (+${proc(forandring('vantelista'))})`,
+      text: `Väntelistan ökar med i snitt 3 personer i månaden, medan antalet äldre med besök ökar med 2,6. I november väntade ${proc(sista.vantelista / (sista.vantelista + sista.besokta) * 100)} av alla som hört av sig, mot 17 % i juni. Antalet volontärer och antalet äldre med besök har vuxit i ungefär samma takt (+125 % och +130 %), så det är rekryteringen av volontärer som sätter gränsen.`,
+      diagram: "Väntelistan växer snabbare än antalet äldre som får besök", rod: true },
+    { id: "f5", rubrik: "Fler inställda besök i november", siffra: `${proc(installdaAndel[5])} inställda i november, ${proc(totInstallda / (totBesok + totInstallda) * 100, 1)} för hela perioden`,
+      text: "Toppar syns i juli (14 %, semester) och november (10 %, förkylningar). Vintern kan ge fler inställda besök, så det är värt att planera för det redan nu.",
+      diagram: "Inställda besök ökar vid semester och förkylningar", rod: true },
+    { id: "f6", rubrik: "Volontärer slutar varje månad", siffra: `${summa('slutat')} har slutat, ${summa('nya')} har börjat (inklusive de 12 från start)`,
+      text: "Från juli har 1–2 volontärer slutat varje månad. Det är inte många, men det äter upp en del av rekryteringen. Datan säger inte varför de slutar.", rod: true },
+    { id: "f7", rubrik: "Ojämna intäkter", siffra: "0 kr från företag i juli och augusti",
+      text: "Under sommaren gick verksamheten med underskott (−2 330 kr och −2 715 kr). Sedan september täcks kostnaderna med god marginal, men intäkterna kommer i klumpar.", rod: true }
+  ],
+  tid: [
+    { id: "f8", rubrik: "Volontärerna har blivit fler än dubbelt så många", siffra: `${forsta.aktiva} → ${sista.aktiva} aktiva volontärer (+${proc(forandring('aktiva'))})`,
+      text: "Störst ökning kom i september (+7 nya), samma månad som företagskampanjen och den första pressartikeln. Även i oktober kom 6 nya, när två företag lät medarbetare bli volontärer. Det är ett samband i tid, inte ett bevis för orsak.",
+      diagram: "Flest nya volontärer kom i september och oktober" },
+    { id: "f9", rubrik: "Varje volontär gör ungefär lika mycket", siffra: `${tal(besokPerVol[0], 1)} → ${tal(besokPerVol[5], 1)} besök per volontär och månad`,
+      text: "Besöken per volontär har legat runt 3 hela perioden, med en topp på 3,5 i augusti. Det tyder på att tillväxten kommer från fler volontärer, inte från att var och en gör mer – vilket är bra för att ingen ska slitas ut." },
+    { id: "f10", rubrik: "Kostnaden per besök har stabiliserats", siffra: `${kr(kostnadPerBesok[0])} i juni, ${kr(kostnadPerBesok[5])} i november`,
+      text: "Juni (startkostnader) och september (kampanj, 6 500 kr i övriga kostnader) sticker ut. Övriga månader ligger kostnaden på 76–82 kr per besök." }
+  ]
+};
+
+const klass = { bra: 'gron', uppm: 'rod', tid: 'brun' };
+for (const grupp in fynd) {
+  document.getElementById(grupp).innerHTML = fynd[grupp].map(f => `
+    <article class="fynd ${klass[grupp]}">
+      <h3>${f.rubrik}</h3>
+      <div class="siffra">${f.siffra}</div>
+      <p>${f.text}</p>
+      ${f.diagram ? `<div class="diagram"><h4>${f.diagram}</h4><div class="canvas-box"><canvas id="c-${f.id}" aria-label="${f.diagram}"></canvas></div></div>` : ''}
+    </article>`).join('');
+}
+
+// ---- Tabell ----
+const kolumner = [
+  ['manad', 'Månad', v => v], ['aktiva', 'Aktiva volontärer', tal], ['nya', 'Nya', tal], ['slutat', 'Slutat', tal],
+  ['besokta', 'Äldre med besök', tal], ['vantelista', 'Väntelista', tal], ['besok', 'Genomförda besök', tal],
+  ['installda', 'Inställda besök', tal], ['timmar', 'Volontärtimmar', tal], ['soppa', 'Kostnad soppa', kr],
+  ['ovriga', 'Övriga kostnader', kr], ['intForetag', 'Intäkter företag', kr], ['intGavor', 'Intäkter gåvor', kr],
+  ['foretag', 'Samarbetsföretag', tal], ['nojdhet', 'Nöjdhet (1–5)', v => tal(v, 1)], ['notering', 'Notering', v => v]
+];
+document.getElementById('tabell').innerHTML =
+  '<thead><tr>' + kolumner.map(k => `<th scope="col">${k[1]}</th>`).join('') + '</tr></thead><tbody>' +
+  data.map(d => '<tr>' + kolumner.map(k => `<td>${k[2](d[k[0]])}</td>`).join('') + '</tr>').join('') + '</tbody>';
+
+// ---- Diagram ----
+if (window.Chart) {
+const F = { gron: '#4E725C', rod: '#B5523B', kram: '#E8C872', brun: '#7A5534', gra: '#BDBDBD' };
+Chart.defaults.font.family = 'Lato, Arial, sans-serif';
+Chart.defaults.font.size = 14;
+Chart.defaults.color = '#212121';
+Chart.defaults.maintainAspectRatio = false;
+Chart.defaults.plugins.tooltip.callbacks.label = c => `${c.dataset.label}: ${tal(c.parsed.y, Number.isInteger(c.parsed.y) ? 0 : 1)}`;
+const yAxel = (txt, extra = {}) => ({ beginAtZero: true, title: { display: !!txt, text: txt }, ticks: { callback: v => tal(v) }, ...extra });
+
+new Chart(document.getElementById('c-f1'), {
+  type: 'line',
+  data: { labels: etiketter, datasets: [{ label: 'Genomförda besök', data: data.map(d => d.besok), borderColor: F.gron, backgroundColor: F.gron, borderWidth: 3, pointRadius: 5 }] },
+  options: { plugins: { legend: { display: false } }, scales: { y: yAxel('Besök per månad') } }
+});
+
+new Chart(document.getElementById('c-f3'), {
+  type: 'bar',
+  data: { labels: etiketter, datasets: [{ label: 'Resultat (kr)', data: netto, backgroundColor: netto.map(v => v < 0 ? F.rod : F.gron) }] },
+  options: { plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => 'Resultat: ' + kr(c.parsed.y) } } },
+    scales: { y: { title: { display: true, text: 'Intäkter minus kostnader' }, ticks: { callback: v => tal(v) + ' kr' } } } }
+});
+
+new Chart(document.getElementById('c-f4'), {
+  type: 'line',
+  data: { labels: etiketter, datasets: [
+    { label: 'Äldre med besök', data: data.map(d => d.besokta), borderColor: F.gron, backgroundColor: F.gron, borderWidth: 3, pointRadius: 5 },
+    { label: 'Äldre på väntelista', data: data.map(d => d.vantelista), borderColor: F.rod, backgroundColor: F.rod, borderWidth: 3, pointRadius: 5 }
+  ] },
+  options: { plugins: { legend: { position: 'bottom' } }, scales: { y: yAxel('Antal äldre') } }
+});
+
+new Chart(document.getElementById('c-f5'), {
+  type: 'bar',
+  data: { labels: etiketter, datasets: [
+    { label: 'Genomförda', data: data.map(d => d.besok), backgroundColor: F.gron },
+    { label: 'Inställda', data: data.map(d => d.installda), backgroundColor: F.rod }
+  ] },
+  options: { plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { afterBody: items => 'Andel inställda: ' + proc(installdaAndel[items[0].dataIndex], 1) } } },
+    scales: { x: { stacked: true }, y: yAxel('Besök per månad', { stacked: true }) } }
+});
+
+new Chart(document.getElementById('c-f8'), {
+  type: 'bar',
+  data: { labels: etiketter, datasets: [
+    { label: 'Nya volontärer', data: data.map(d => d.nya), backgroundColor: F.gron },
+    { label: 'Volontärer som slutat', data: data.map(d => d.slutat), backgroundColor: F.brun }
+  ] },
+  options: { plugins: { legend: { position: 'bottom' } }, scales: { y: yAxel('Antal volontärer') } }
+});
+} else {
+  document.querySelectorAll('.canvas-box').forEach(b => b.innerHTML = '<p class="not">Diagrammet kunde inte laddas. Kontrollera internetanslutningen.</p>');
+}
+</script>
+</body>
+</html>
